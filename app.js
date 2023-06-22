@@ -11,8 +11,9 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Routes
+const name = "Aditya"
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('index',{userName:name,surName:"Dubey"});
 });
 
 // Start the server
