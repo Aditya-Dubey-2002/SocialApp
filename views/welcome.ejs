@@ -1,0 +1,14 @@
+<%- include ('partials/header') %>
+
+Welcome User
+<form action="/logout" method="get"><button>Logout</button></form>
+
+<div class="form">
+    What do you wanna do?
+    <form action="/blogs" method="get"><button>Read Blogs</button></form>
+    <form action="/todolist" method="get"><button>Visit Today's List</button></form>
+</div>
+
+
+
+<%- include ('partials/footer') %>
