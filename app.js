@@ -13,15 +13,6 @@ const methodOverride = require('method-override');
 const encrypt = require('mongoose-encryption');
 const passportLocalMongoose = require('passport-local-mongoose')
 
-// const initializePassport = require('./passport-config')
-// initializePassport(
-//   passport,
-//   email => users.find(user => user.email === email),
-//   id => users.find(user => user.id === id)
-// )
-
-
-
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
@@ -116,79 +107,6 @@ app.post('/login', (req, res) => {
   })
 })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-////////
-// app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-//   successRedirect: '/',
-//   failureRedirect: '/login',
-//   failureFlash: true
-// }))
-
-
-
-// app.post('/register', checkNotAuthenticated, async (req, res) => {
-//   try {
-
-//     const hashedPassword = await bcrypt.hash(req.body.password, 10)
-//     const newUser = new User({
-//       email : req.body.name,
-//       name : req.body.password,
-//       password :hashedPassword
-//     })
-//     newUser.save(function(err){
-//       if(err){
-//         console.log(err)
-//       }
-//       else{
-//         res.redirect('/login');
-//       }
-//     })
-
-//   } catch {
-//     res.redirect('/register');
-//   }
-// })
-
-// app.delete('/logout', (req, res) => {
-//   req.logOut()
-//   res.redirect('/login')
-// })
-
-// function checkAuthenticated(req, res, next) {
-//   if (req.isAuthenticated()) {
-//     return next()
-//   }
-
-//   res.redirect('/login')
-// }
-
-// function checkNotAuthenticated(req, res, next) {
-//   if (req.isAuthenticated()) {
-//     return res.redirect('/')
-//   }
-//   next()
-// }
 
 // // Start the server
 app.listen(3000, () => {
