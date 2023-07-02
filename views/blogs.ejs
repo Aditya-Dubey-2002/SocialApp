@@ -1,0 +1,17 @@
+<%- include('partials/header')%>
+<form action="/compose" method="get" class="form">
+    <button method="get">Compose Blog</button>
+</form>
+
+<div class="container"> 
+    <%  blogs.forEach(function(blog){ %>
+        <h3><%=blog.blogDate%></h3>
+        <h1><%=blog.blogTitle%></h1>
+        <p>
+        <%= blog.blogContent %>
+        </p>
+        <button >Edit</button>
+        <button>Delete</button>
+    <% }) %>
+</div>
+<%- include('partials/footer')%>

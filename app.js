@@ -28,16 +28,20 @@ app.use(methodOverride('_method'));
 
 mongoose.connect("mongodb://localhost:27017/mySpaceUsersDB", { useNewUrlParser: true });
 
+
+
 const userSchema = new mongoose.Schema({
   name: String,
   email: String,
-  password: String
+  password: String,
 });
 
 const secret = process.env.SESSION_SECRET;
 userSchema.plugin(passportLocalMongoose);
 
 const User = new mongoose.model("User", userSchema);
+
+
 
 passport.use(User.createStrategy());
 
@@ -49,13 +53,13 @@ app.get('/', (req, res) => {
 })
 
 app.get('/welcome', (req, res) => {
-  if(req.isAuthenticated()){
+  if (req.isAuthenticated()) {
     res.render('welcome.ejs');
   }
-  else{
+  else {
     res.redirect("/login");
   }
-  
+
 })
 
 app.get('/login', (req, res) => {
@@ -66,23 +70,23 @@ app.get('/register', (req, res) => {
   res.render('register.ejs')
 });
 
-app.get("/logout",function(req,res){
-  req.logout(function(){
-    
-      res.redirect('/');
-    
+app.get("/logout", function (req, res) {
+  req.logout(function () {
+
+    res.redirect('/');
+
   });
-  
+
 })
 
 app.post('/register', function (req, res) {
-  User.register({username:req.body.username},req.body.password,function(err,user){
-    if(err){
+  User.register({ username: req.body.username }, req.body.password, function (err, user) {
+    if (err) {
       console.log(err);
       res.redirect('register');
     }
-    else{
-      passport.authenticate('local')(req,res,function(){
+    else {
+      passport.authenticate('local')(req, res, function () {
         res.redirect('welcome');
       })
     }
@@ -92,21 +96,67 @@ app.post('/register', function (req, res) {
 
 app.post('/login', (req, res) => {
   const user = new User({
-    username : req.body.username,
-    password:req.body.password
+    username: req.body.username,
+    password: req.body.password
   })
-  req.login(user,function(err){
-    if(err){
+  req.login(user, function (err) {
+    if (err) {
       console.log(err);
     }
-    else{
-      passport.authenticate("local")(req,res,function(){
+    else {
+      passport.authenticate("local")(req, res, function () {
         res.redirect("/welcome");
       })
     }
   })
 })
 
+
+// blogs
+
+const blogSchema = new mongoose.Schema({
+  userID : String,
+  blogTitle: String,
+  blogContent: String,
+  blogDate: String
+});
+
+const Blog = new mongoose.model("Blog", blogSchema);
+
+// const blogs = [];
+
+app.get('/blogs', (req, res) => {
+  // console.log((blogs));
+  Blog.find().then(myblogs=>{
+    res.render('blogs.ejs',
+    { blogs: myblogs });
+  });
+});
+
+app.get('/compose', (req, res) => {
+  res.render('compose.ejs');
+});
+
+app.post('/compose', (req, res) => {
+  const date = new Date();
+  const month = date.getMonth();
+  const day = date.getDay();
+  const yr = date.getFullYear();
+  const newBlog = new Blog({
+    blogContent:  req.body.content,
+    blogTitle : req.body.title,
+    blogDate : day+'/'+month+'/'+yr
+  })
+  newBlog.save();
+  // 
+  // const newBlog = {
+  //   blogTitle: req.body.title,
+  //   blogContent: req.body.content,
+  //   blogDate: day+'/'+month+'/'+yr
+  // }
+  // blogs.push(newBlog);
+  res.redirect('/blogs');
+})
 
 // // Start the server
 app.listen(3000, () => {
