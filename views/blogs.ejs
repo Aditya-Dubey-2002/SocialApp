@@ -1,17 +1,39 @@
 <%- include('partials/header')%>
-<form action="/compose" method="get" class="form">
-    <button method="get">Compose Blog</button>
-</form>
+    <form action="/compose" method="get" class="form">
+        <button method="get">Compose Blog</button>
+    </form>
 
-<div class="container"> 
-    <%  blogs.forEach(function(blog){ %>
-        <h3><%=blog.blogDate%></h3>
-        <h1><%=blog.blogTitle%></h1>
-        <p>
-        <%= blog.blogContent %>
-        </p>
-        <button >Edit</button>
-        <button>Delete</button>
-    <% }) %>
-</div>
-<%- include('partials/footer')%>
+    <div class="container">
+        <ul class="ul">
+            <% blogs.forEach(function(blog){ %>
+                <li class="li">
+                    <div class="blog container">
+                        <h4 class="dates">
+                            <%=blog.blogDate%>
+                        </h4>
+                        <h2>
+                            <%= blog.userID %>
+                        </h2>
+                        <h1>
+                            <%=blog.blogTitle%>
+                        </h1>
+                        <p>
+                            <%= blog.blogContent %>
+                        </p>
+                        <% if(user==blog.userID){%>
+                            <button action="/edit" method="post">Edit</button>
+                            <button id="del-btn">>Delete</button>
+                            <script>
+                                function del() {
+                                    console.log('deleted');
+                                    // Blog.deleteOne({blogTitle:title});
+                                }
+                            </script>
+                            <% } %>
+                    </div>
+                </li>
+                <% }) %>
+        </ul>
+
+    </div>
+    <%- include('partials/footer')%>

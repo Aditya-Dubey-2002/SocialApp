@@ -1,0 +1,11 @@
+<%- include('partials/header') %>
+<div class = "create-blog form">
+    <form action="/edit" method="post">
+        <label for="title">Title</label>
+        <input type="text" name="title" id="" placeholder="Enter Title here">
+        <label for="content">Content</label>
+        <textarea name="content" id="" cols="30" rows="10" placeholder="Write the Blog Here"></textarea>
+        <button method="submit">Save</button>
+    </form>
+</div>
+<%- include('partials/footer') %>

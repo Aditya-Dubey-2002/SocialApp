@@ -52,12 +52,16 @@ app.get('/', (req, res) => {
   res.render('index.ejs')
 })
 
+let userId = ' ';
+
 app.get('/welcome', (req, res) => {
   if (req.isAuthenticated()) {
-    res.render('welcome.ejs');
+    console.log(req.user);
+    res.render('welcome.ejs',{userName:req.user.username});
+    userId = req.user.username;
   }
   else {
-    res.redirect("/login");
+    res.redirect("/");
   }
 
 })
@@ -86,7 +90,9 @@ app.post('/register', function (req, res) {
       res.redirect('register');
     }
     else {
+      userId=req.body.username;
       passport.authenticate('local')(req, res, function () {
+        
         res.redirect('welcome');
       })
     }
@@ -104,6 +110,7 @@ app.post('/login', (req, res) => {
       console.log(err);
     }
     else {
+      userId=req.body.username;
       passport.authenticate("local")(req, res, function () {
         res.redirect("/welcome");
       })
@@ -125,11 +132,16 @@ const Blog = new mongoose.model("Blog", blogSchema);
 
 // const blogs = [];
 
+
 app.get('/blogs', (req, res) => {
   // console.log((blogs));
+  // const delBlog=function(){
+  //   console.log('deleted');
+  //   // Blog.deleteOne({blogTitle:title});
+  // }
   Blog.find().then(myblogs=>{
     res.render('blogs.ejs',
-    { blogs: myblogs });
+    { blogs: myblogs,user:userId});
   });
 });
 
@@ -143,6 +155,7 @@ app.post('/compose', (req, res) => {
   const day = date.getDay();
   const yr = date.getFullYear();
   const newBlog = new Blog({
+    userID: userId,
     blogContent:  req.body.content,
     blogTitle : req.body.title,
     blogDate : day+'/'+month+'/'+yr
