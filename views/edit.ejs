@@ -1,0 +1,7 @@
+<!-- <%- include('partials/header') %> -->
+<div class = "create-blog blog container">
+    <h1><%= blog.blogTitle %></h1>
+    <h3><%= blog.blogContent %></h3>
+    <a href="/delete/<%=blog._id %>"><button >Delete</button></a>
+</div>
+<%- include('partials/footer') %>

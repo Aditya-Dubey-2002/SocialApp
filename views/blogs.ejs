@@ -1,5 +1,5 @@
 <%- include('partials/header')%>
-    <form action="/compose" method="get" class="form">
+    <form action="/compose/<%= user %>" method="get" class="form">
         <button method="get">Compose Blog</button>
     </form>
 
@@ -21,14 +21,7 @@
                             <%= blog.blogContent %>
                         </p>
                         <% if(user==blog.userID){%>
-                            <button action="/edit" method="post">Edit</button>
-                            <button id="del-btn">>Delete</button>
-                            <script>
-                                function del() {
-                                    console.log('deleted');
-                                    // Blog.deleteOne({blogTitle:title});
-                                }
-                            </script>
+                            <a href="/delete/userID/<%=blog._id %>"><button >Delete</button></a>
                             <% } %>
                     </div>
                 </li>
@@ -36,4 +29,5 @@
         </ul>
 
     </div>
+    <form action="/logout" method="get"><button>Logout</button></form>
     <%- include('partials/footer')%>
