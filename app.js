@@ -16,7 +16,8 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const _ = require('lodash');
 const findOrCreate = require('mongoose-findorcreate');
 
-app.set('view-engine', 'ejs')
+app.set('view-engine', 'ejs');
+app.use(express.static(__dirname + '/public'));
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
 app.use(session({
