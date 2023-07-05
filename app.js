@@ -12,7 +12,9 @@ const session = require('express-session')
 const methodOverride = require('method-override');
 const encrypt = require('mongoose-encryption');
 const passportLocalMongoose = require('passport-local-mongoose');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const _ = require('lodash');
+const findOrCreate = require('mongoose-findorcreate');
 
 app.set('view-engine', 'ejs')
 app.use(express.urlencoded({ extended: false }));
@@ -32,6 +34,7 @@ app.use(methodOverride('_method'));
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://Aditya:6zlz2WoiiilXCAeB@cluster0.knas0ja.mongodb.net/?retryWrites=true&w=majority";
 mongoose.connect(uri, { useNewUrlParser: true });
+// mongoose.connect("mongodb://localhost:27017/mySpaceUsersDB");
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
@@ -62,23 +65,65 @@ const userSchema = new mongoose.Schema({
   name: String,
   email: String,
   password: String,
+  googleId:String
 });
 
 const secret = process.env.SESSION_SECRET;
 userSchema.plugin(passportLocalMongoose);
-
+userSchema.plugin(findOrCreate);
 const User = new mongoose.model("User", userSchema);
 
 
 
 passport.use(User.createStrategy());
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(function(user, cb) {
+  process.nextTick(function() {
+    return cb(null, {
+      id: user.id,
+      username: user.username,
+      picture: user.picture
+    });
+  });
+});
+
+passport.deserializeUser(function(user, cb) {
+  process.nextTick(function() {
+    return cb(null, user);
+  });
+});
+
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "http://localhost:3000/auth/google/myspace"
+},
+  function (accessToken, refreshToken, profile, cb) {
+    console.log(profile);
+    User.findOrCreate({ googleId: profile.id,username:profile.name.givenName }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
 
 app.get('/', (req, res) => {
   res.render('index.ejs')
-})
+});
+
+app.route('/auth/google')
+
+  .get(passport.authenticate('google', {
+
+    scope: ['profile']
+
+  }));
+
+  app.get('/auth/google/myspace', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/welcome');
+  });
 
 let userId = ' ';
 
@@ -176,7 +221,7 @@ app.get('/blogs/:userName', (req, res) => {
 });
 
 app.get('/compose/:user', (req, res) => {
-  res.render('compose.ejs',{user:req.params['user']});
+  res.render('compose.ejs', { user: req.params['user'] });
 });
 
 app.post('/compose/:user', (req, res) => {
@@ -198,7 +243,7 @@ app.post('/compose/:user', (req, res) => {
   //   blogDate: day+'/'+month+'/'+yr
   // }
   // blogs.push(newBlog);
-  res.redirect('/blogs/'+req.params['user']);
+  res.redirect('/blogs/' + req.params.user);
 })
 
 app.get("/delete/:userName/:id", function (req, res) {

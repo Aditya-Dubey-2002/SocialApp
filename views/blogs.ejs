@@ -8,12 +8,12 @@
             <% blogs.forEach(function(blog){ %>
                 <li class="li">
                     <div class="blog container">
+                        <h2 class="user">
+                            <%= blog.userID %>
+                        </h2>
                         <h4 class="dates">
                             <%=blog.blogDate%>
                         </h4>
-                        <h2>
-                            <%= blog.userID %>
-                        </h2>
                         <h1>
                             <%=blog.blogTitle%>
                         </h1>
@@ -21,7 +21,7 @@
                             <%= blog.blogContent %>
                         </p>
                         <% if(user==blog.userID){%>
-                            <a href="/delete/userID/<%=blog._id %>"><button >Delete</button></a>
+                            <a href="/delete/<%= user %>/<%=blog._id %>"><button >Delete</button></a>
                             <% } %>
                     </div>
                 </li>
